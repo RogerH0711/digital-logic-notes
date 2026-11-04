@@ -19,6 +19,7 @@ export function validateSyllabus(syllabus) {
   syllabus.units.forEach((u, i) => {
     if (!u || typeof u.id !== 'string' || !ID_RE.test(u.id)) return push(`第 ${i + 1} 個單元的 id「${u?.id}」格式錯誤，應為 NN-kebab-case`);
     if (typeof u.title !== 'string' || !u.title.trim()) push(`${u.id} 缺少 title`);
+    if (typeof u.chapter !== 'string' || !u.chapter.trim()) push(`${u.id} 缺少 chapter（對應課本章節）`);
     if (seen.has(u.id)) push(`id ${u.id} 重複`);
     seen.add(u.id);
     const n = Number(u.id.slice(0, 2));

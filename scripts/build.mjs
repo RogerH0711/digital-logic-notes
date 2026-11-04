@@ -155,6 +155,7 @@ for (const u of units) {
     sidebar,
     unitBits: toBits(no),
     unitNo: String(no).padStart(2, '0'),
+    chapter: escapeHtml(syllabus.units.find((x) => x.id === u.id).chapter),
     title: escapeHtml(u.data.title),
     summary: escapeHtml(u.data.summary),
     meta,
@@ -179,7 +180,7 @@ const cards = syllabus.units
   .map((s) => {
     const n = Number(s.id.slice(0, 2));
     const u = byId[s.id];
-    const head = `<span class="bits">${toBits(n)}</span><span class="card-no">Unit ${String(n).padStart(2, '0')}</span>`;
+    const head = `<span class="bits">${toBits(n)}</span><span class="card-no">${escapeHtml(s.chapter)}</span>`;
     if (!u) return `        <li class="unit-card planned"><div class="card-head">${head}<em>撰寫中</em></div><h3>${escapeHtml(s.title)}</h3></li>`;
     const tags = u.data.tags.map((t) => `<span class="tag">${escapeHtml(t)}</span>`).join('');
     return `        <li class="unit-card"><a href="units/${s.id}.html"><div class="card-head">${head}<span class="card-ex">${u.exercises} 題練習</span></div><h3>${escapeHtml(s.title)}</h3><p>${escapeHtml(u.data.summary)}</p><div class="card-tags">${tags}</div></a></li>`;

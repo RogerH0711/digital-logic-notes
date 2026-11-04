@@ -7,8 +7,8 @@
 
 ## 1. 專案目的
 
-- **是什麼**：一個以「單元」為單位的數位邏輯講義網站，內容對應大學「數位系統導論／數位邏輯設計」課程，從布林代數一路到循序電路。
-- **給誰看**：正在修這門課、需要考前複習的大學部學生。讀者會寫程式，但對電路還不熟。
+- **是什麼**：一個以「單元」為單位的數位邏輯複習講義網站，章節對應課本 M. Morris Mano & Michael D. Ciletti《Digital Design》（6th ed.）第 1–6 章與 Verilog 補充。
+- **給誰看**：正在修「數位系統導論」、需要考前複習的大學部學生。讀者會寫程式，但對電路還不熟。
 - **核心原則**：每一頁都要「能自己讀懂、能自己練習、能自己驗證答案」。
 - **怎麼長大**：內容只寫在 Markdown，網站由 build script 自動產生。新增一個單元＝新增一個 `.md` 檔，不需要碰 HTML、CSS 或 JavaScript。
 
@@ -40,15 +40,16 @@ npm run dev       # build 後在 http://localhost:4173 預覽
 ├── README.md                 ← 給人看的專案簡介
 ├── site.config.json          ← 網站標題、作者、repo 網址
 ├── content/
-│   ├── syllabus.yml          ← 課程大綱：所有單元（含尚未撰寫的）的編號、檔名、標題，以及允許使用的 tags
+│   ├── syllabus.yml          ← 課程大綱：所有單元（含尚未撰寫的）的 id、標題、對應課本章節，以及允許使用的 tags
 │   └── units/
 │       ├── _template.md      ← 新單元範本（底線開頭的檔案不會被 build）
-│       ├── 01-boolean-algebra.md
-│       └── 02-karnaugh-maps.md
+│       ├── 01-number-systems.md
+│       ├── 02-boolean-algebra.md
+│       └── …（每個單元一個檔）
 ├── assets/
 │   ├── css/style.css         ← 全站唯一的樣式表
 │   ├── js/main.js            ← 主題切換、目錄高亮
-│   └── img/<單元檔名>/        ← 各單元圖片，例如 assets/img/02-karnaugh-maps/fig1.svg
+│   └── img/<單元檔名>/        ← 各單元圖片，例如 assets/img/03-gate-level-minimization/fig1.svg
 ├── templates/
 │   ├── layout.html           ← 共用外框（header、footer）
 │   ├── unit.html             ← 單元頁
@@ -57,6 +58,7 @@ npm run dev       # build 後在 http://localhost:4173 預覽
 │   ├── build.mjs             ← 進入點：讀內容 → 驗證 → 輸出 dist/
 │   ├── serve.mjs             ← 本機預覽伺服器
 │   └── lib/                  ← markdown 設定、kmap 元件、驗證規則、樣板套用
+├── sources/                  ← 使用者提供的投影片 PDF（已 gitignore，不 commit）
 ├── .github/workflows/deploy.yml  ← push 到 main 後自動 build 並部署 GitHub Pages
 └── dist/                     ← build 輸出，不進 git，不要手動編輯
 ```
@@ -66,9 +68,9 @@ npm run dev       # build 後在 http://localhost:4173 預覽
 依序做完以下步驟：
 
 1. **確認大綱**：打開 `content/syllabus.yml`，找到要寫的單元條目。
-   - 已有條目就沿用它的 `id` 與 `title`，不要改名。單元編號就是 `id` 的前兩碼。
-   - 大綱裡沒有，就在清單最後新增條目，編號接續最後一個（check 會要求 01 起連續編號）。不要插號或重新編號既有單元，否則網址會變。
-2. **建立檔案**：複製 `content/units/_template.md` 成 `content/units/<id>.md`，例如 `03-combinational-design.md`。
+   - 已有條目就沿用它的 `id`、`title`、`chapter`，不要改名。單元編號就是 `id` 的前兩碼。
+   - 大綱裡沒有，就在清單最後新增條目（`id`、`title`、`chapter` 都必填），編號接續最後一個（check 會要求 01 起連續編號）。不要插號或重新編號既有單元，否則網址會變。
+2. **建立檔案**：複製 `content/units/_template.md` 成 `content/units/<id>.md`，例如 `04-combinational-logic.md`。
 3. **填 frontmatter**：見第 5 節，所有欄位都必填。
 4. **寫內容**：照第 6 節的章節骨架與第 7 節的元件語法撰寫。
 5. **圖片**（需要時）：放到 `assets/img/<id>/`，檔名用小寫英文加連字號，優先用 SVG。
@@ -76,6 +78,17 @@ npm run dev       # build 後在 http://localhost:4173 預覽
 7. **自我檢查**：逐項核對第 10 節的清單。
 
 完成後，首頁目錄、側邊欄、上一頁／下一頁會自動更新，**不需要手動改任何導覽連結**。
+
+### 4.1 從課堂投影片整理成單元
+
+使用者常會給一份投影片 PDF，要求整理成對應單元。投影片放在 repo 根目錄的 `sources/`；這個資料夾已列在 `.gitignore`，**不會也不可以 commit**，因為投影片版權屬於授課老師與課本出版社。
+
+1. 先讀完整份投影片，列出它涵蓋的小節（例如 4.1–4.11）與每節的重點、例題類型。
+2. 把小節對應成單元的 H2／H3。順序跟投影片一致，方便對照上課進度。
+3. 投影片標成 Practice Exercise、Example 的題型，改成數字不同的新題目，放進正文的 `example` 或 `## 練習題`。
+4. 投影片裡的電路圖不要截圖，改用文字、真值表、布林式或 `kmap` 表達。
+5. 投影片若有錯誤或說法不精確，以正確內容為準，並用 `warning` 提醒讀者常見的誤解。
+6. 其餘照第 4 節步驟 3–7 完成。
 
 ## 5. 單元檔案格式
 
@@ -89,11 +102,11 @@ npm run dev       # build 後在 http://localhost:4173 預覽
 
 ```yaml
 ---
-title: 卡諾圖化簡             # 必須和 syllabus.yml 的 title 相同
-unit: 2                       # 整數，必須等於檔名前兩碼
-summary: 用格子圖把相鄰最小項合併，快速得到最簡 SOP／POS。   # 一句話，≤ 60 字，會顯示在首頁卡片
+title: 閘級化簡               # 必須和 syllabus.yml 的 title 相同
+unit: 3                       # 整數，必須等於檔名前兩碼
+summary: 用卡諾圖得到最簡 SOP／POS，再轉成 NAND、NOR 電路。   # 一句話，≤ 60 字，會顯示在首頁卡片
 tags: [化簡, 卡諾圖]           # 1–4 個，只能用 syllabus.yml 裡 tags 清單中的詞
-prerequisites: [01-boolean-algebra]   # 先備單元的 id；沒有就寫 []；只能指向編號更小的單元
+prerequisites: [02-boolean-algebra]   # 先備單元的 id；沒有就寫 []；只能指向編號更小的單元
 updated: 2026-11-04           # 最後實質修改日期，YYYY-MM-DD
 ---
 ```
@@ -105,7 +118,7 @@ updated: 2026-11-04           # 最後實質修改日期，YYYY-MM-DD
 - 中間是正文 H2，數量不限，用 H3 細分。不要跳級（H2 底下直接接 H4）。
 - 倒數第二個 H2 必須是 `## 重點整理`：條列，每點一句。
 - 最後一個 H2 必須是 `## 練習題`：至少 2 題 `exercise`，每題都要附 `answer`。
-- 建議篇幅：正文 800–2000 字（中文字），超過就拆成兩個單元。
+- 建議篇幅：正文 1500–4000 字（中文字）。一個單元對應課本一章（或半章），內容多時用 H2／H3 分段，不要另開單元。
 
 ## 6. 寫作風格
 
@@ -115,6 +128,8 @@ updated: 2026-11-04           # 最後實質修改日期，YYYY-MM-DD
 - **例子先於定義**：先給一個具體的函數或真值表，再歸納規則。
 - **每個化簡結果都要可驗證**：凡是給出「最簡式」，就用 `kmap` 區塊（第 7.4 節）呈現。它會自動檢查圈法是否合法，並自動產生乘積項，避免手算錯誤。
 - **不編造來源**：不要寫「根據某教科書第 X 頁」這類無法驗證的引用。
+- **用自己的話寫**：網站是公開的。整理課堂投影片或課本時，只取「涵蓋哪些主題、重點在哪」，說明文字要重寫，不要逐字翻譯或貼上原文，也不要放投影片或課本的截圖。例題換成同類型但數字不同的新題目。
+- **符號統一**：課本與投影片用 $x'$ 表示補數，本站一律改寫成 $\inv{x}$。變數名稱沿用題目本身（$A, B, C$ 或 $x, y, z$ 皆可）。
 
 ### 統一用詞表
 
@@ -180,6 +195,7 @@ groups:                     # 可省略；省略時只畫圖不圈
   - [5, 7, 13, 15]
   - [0, 2, 8, 10]
 partial: false              # true＝允許沒圈完（用於分步驟講解）
+name: D_A                   # 可省略；結果式左邊的函數名稱（LaTeX），預設 F(A,B,C,D)
 caption: 四個角落也是相鄰的   # 可省略，支援行內數學式
 ```
 ````
@@ -198,6 +214,8 @@ build 會自動做以下事情：
 
 - 真值表用一般 Markdown 表格，輸入欄在左、輸出欄在右，列依二進位遞增排列。
 - 程式碼（Verilog 等）用 fenced code block，語言標記寫 `verilog`。
+- **行內程式碼不要含錢字號**：數學式的解析比行內程式碼早，兩段行內程式碼裡各有一個錢字號時，中間的文字會被當成數學式。Verilog 的系統任務（monitor、finish 等）在正文中用文字描述，或放進 fenced code block。
+- 表格儲存格裡的直線符號要寫成反斜線加直線（例如 OR 運算子），否則會被當成欄位分隔。
 - 圖片：`![替代文字](../assets/img/<id>/fig1.svg)`；替代文字必填，要描述圖的內容。
 
 ## 8. 視覺風格（未經使用者要求不要改）

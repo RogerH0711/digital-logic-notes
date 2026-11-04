@@ -1,9 +1,9 @@
 ---
-title: 卡諾圖化簡
-unit: 2
-summary: 用格子圖把相鄰最小項合併，快速且系統地得到最簡 SOP 與 POS。
-tags: [化簡, 卡諾圖, 標準形式]
-prerequisites: [01-boolean-algebra]
+title: 閘級化簡
+unit: 3
+summary: 用卡諾圖得到最簡 SOP／POS，再轉成 NAND、NOR 等兩層電路，並認識 XOR 與同位元電路。
+tags: [化簡, 卡諾圖, 邏輯閘]
+prerequisites: [02-boolean-algebra]
 updated: 2026-11-04
 ---
 
@@ -13,6 +13,8 @@ updated: 2026-11-04
 - 會依規則圈出合法的圈，並把每一圈讀成乘積項。
 - 能分辨質蘊含項與必要質蘊含項，找出最簡 SOP。
 - 會利用無關項讓結果更簡單，並用圈 0 的方式求最簡 POS。
+- 會把最簡式轉成只用 NAND 或只用 NOR 的電路，並認得 AOI／OAI 等兩層形式。
+- 能說明 XOR 的性質，設計同位元產生器與檢查器。
 
 ## 為什麼需要卡諾圖
 
@@ -160,6 +162,102 @@ caption: 多數決函數的 0 是 $m_0, m_1, m_2, m_4$。圈 $[0,1]$ 時 $A = 0$
 
 同一個函數的最簡 SOP 是 $AB + AC + BC$，最簡 POS 是 $(A+B)(A+C)(B+C)$，兩者等價。實作時看哪一種用的閘比較少就選哪一種。
 
+## NAND 與 NOR 實現
+
+NAND 與 NOR 是通用閘，而且在 CMOS 中最省電晶體，所以化簡完的式子通常會轉成只用 NAND 或只用 NOR 的電路。
+
+### 兩層 NAND：從 SOP 出發
+
+SOP 是「AND 再 OR」。把整個式子取兩次補數，再用笛摩根定理拆開內層那一次：
+
+$$F = AB + CD = \inv{\inv{AB + CD}} = \inv{\inv{AB} \cdot \inv{CD}}$$
+
+$\inv{AB}$ 是 NAND，外層「AND 再取補數」也是 NAND。所以 **AND-OR 電路可以直接把每個閘換成 NAND**，連線完全不變。
+
+::: example 用兩層 NAND 實現 $F(x,y,z) = \sum m(0,2,4,5,6)$
+先化簡：
+
+```kmap
+vars: [x, y, z]
+ones: [0, 2, 4, 5, 6]
+groups:
+  - [0, 2, 4, 6]
+  - [4, 5]
+```
+
+$F = \inv{z} + x\inv{y}$。第二項 $x\inv{y}$ 換成 NAND，第一項只有一個文字，它進入外層 NAND 前要先取補數，也就是直接接 $z$：
+
+$$F = \inv{\,z \cdot \inv{x\inv{y}}\,}$$
+
+共用一個兩輸入 NAND（輸入 $x$、$\inv{y}$）和一個兩輸入 NAND 輸出級，$\inv{y}$ 由反相器提供。
+:::
+
+::: warning 單一文字項要反相
+SOP 中只有一個文字的項，直接接到輸出級 NAND 時要先取補數。上例的 $\inv{z}$ 在 NAND 電路裡變成接 $z$；如果項是 $z$，就要接 $\inv{z}$。
+:::
+
+### 兩層 NOR：從 POS 出發
+
+對偶地，POS 是「OR 再 AND」，**把每個閘換成 NOR** 即可。要用 NOR 實現，就先在卡諾圖上圈 0 得到最簡 POS。
+
+上例的 0 是 $m_1, m_3, m_7$，圈 $[1,3]$ 得 $(x + \inv{z})$，圈 $[3,7]$ 得 $(\inv{y} + \inv{z})$，所以
+
+$$F = (x + \inv{z})(\inv{y} + \inv{z}) = \inv{\,\inv{x + \inv{z}} + \inv{\inv{y} + \inv{z}}\,}$$
+
+### 多層電路的轉換
+
+式子超過兩層時，用「泡泡」（小圓圈，代表反相）來轉換：
+
+1. 每個 AND 換成 NAND（AND 加輸出泡泡）。
+2. 每個 OR 換成「輸入加泡泡的 OR」，它等於 NAND（笛摩根定理）。
+3. 檢查每條線：兩端泡泡成對就互相抵消；只有一個泡泡的地方要補一個反相器，或把輸入變數改接補數。
+
+NOR 電路的做法相同，只是角色互換：OR 換成 NOR，AND 換成「輸入加泡泡的 AND」。
+
+## 其他兩層實現
+
+AND、OR、NAND、NOR 兩兩組成兩層電路共有 16 種。其中 8 種會退化成單一運算（例如 AND-AND 只是一個多輸入 AND），另外 8 種是非退化形式（nondegenerate form），分成四組等價的對：
+
+| 等價形式 | 實現的函數 | 怎麼化簡 |
+| --- | --- | --- |
+| AND-OR、NAND-NAND | $F = AB + CD$（SOP） | 圈 1 得 $F$ |
+| OR-AND、NOR-NOR | $F = (A+B)(C+D)$（POS） | 圈 0 得 $F$ |
+| AND-NOR、NAND-AND | $F = \inv{AB + CD}$（AND-OR-INVERT, AOI） | 圈 0 得 $\inv{F}$ 的 SOP |
+| OR-NAND、NOR-OR | $F = \inv{(A+B)(C+D)}$（OR-AND-INVERT, OAI） | 圈 1 得 $F$ 的 SOP，取補數成 $\inv{F}$ 的 POS |
+
+AOI 與 OAI 在 CMOS 中可以做成單一複合閘，比分開的 AND、OR 加反相器更省面積與延遲。
+
+## 互斥或與同位元
+
+### XOR 的性質
+
+$x \oplus y = x\inv{y} + \inv{x}y$，XNOR 是它的補數 $\inv{x \oplus y} = xy + \inv{x}\,\inv{y}$。常用的性質：
+
+- $x \oplus 0 = x$、$x \oplus 1 = \inv{x}$
+- $x \oplus x = 0$、$x \oplus \inv{x} = 1$
+- $x \oplus \inv{y} = \inv{x} \oplus y = \inv{x \oplus y}$
+- 滿足交換律與結合律，所以 $x \oplus y \oplus z$ 不必加括號。
+
+### 奇函數
+
+多變數 XOR 在奇數個輸入為 1 時輸出 1。三變數 XOR 是 $\sum m(1,2,4,7)$，在卡諾圖上呈棋盤狀，**沒有任何兩個 1 相鄰**，所以無法用 SOP 化簡，直接用 XOR 閘最省：
+
+```kmap
+vars: [x, y, z]
+ones: [1, 2, 4, 7]
+caption: 三變數奇函數 $x \oplus y \oplus z$。四個 1 互不相鄰，卡諾圖化簡不了。
+```
+
+XNOR 則是偶函數，在偶數個輸入為 1 時輸出 1。
+
+### 同位元產生器與檢查器
+
+傳送 3 位元訊息 $x, y, z$ 時，用偶同位：發送端的同位元產生器（parity generator）算出 $P = x \oplus y \oplus z$，讓四個位元中 1 的個數為偶數。接收端的同位元檢查器（parity checker）計算
+
+$$C = x \oplus y \oplus z \oplus P$$
+
+$C = 0$ 表示沒有偵測到錯誤，$C = 1$ 表示有奇數個位元出錯。這就是[第 1 單元](01-number-systems.html)同位元的電路實現。
+
 ## 重點整理
 
 - 卡諾圖用格雷碼排列，讓只差一個位元的最小項在圖上相鄰，邊界與角落也相鄰。
@@ -168,6 +266,9 @@ caption: 多數決函數的 0 是 $m_0, m_1, m_2, m_4$。圈 $[0,1]$ 時 $A = 0$
 - 化簡流程：找出所有質蘊含項 → 選必要質蘊含項 → 用最少的質蘊含項補齊。
 - 無關項能讓圈變大就當 1，否則忽略。
 - 圈 0 得到最簡 POS，讀和項時 0 寫原變數、1 寫補數。
+- SOP 的 AND-OR 可直接換成 NAND-NAND，POS 的 OR-AND 可直接換成 NOR-NOR；單一文字項要反相。
+- 非退化兩層形式共 8 種，AOI 圈 0 得 $\inv{F}$ 的 SOP，OAI 圈 1 再取補數。
+- 多變數 XOR 是奇函數，卡諾圖呈棋盤狀無法化簡；偶同位產生器 $P = x \oplus y \oplus z$。
 
 ## 練習題
 
@@ -224,5 +325,34 @@ groups:
 - $[4,6,12,14]$：$B = 1$、$D = 0$ 不變 → $(\inv{B} + D)$。
 
 三個和項 AND 起來就是最簡 POS。
+:::
+::::
+
+:::: exercise 化簡 $F(A,B,C,D) = \sum m(0,1,2,8,9,10)$，並畫成兩層 NAND 電路
+::: answer
+```kmap
+vars: [A, B, C, D]
+ones: [0, 1, 2, 8, 9, 10]
+groups:
+  - [0, 1, 8, 9]
+  - [0, 2, 8, 10]
+caption: 第一圈跨上下邊界，第二圈是四個角落。
+```
+
+$F = \inv{B}\,\inv{C} + \inv{B}\,\inv{D}$。兩層 NAND：
+
+$$F = \inv{\,\inv{\inv{B}\,\inv{C}} \cdot \inv{\inv{B}\,\inv{D}}\,}$$
+
+需要兩個兩輸入 NAND（輸入分別是 $\inv{B}, \inv{C}$ 和 $\inv{B}, \inv{D}$），加一個兩輸入 NAND 當輸出級，$\inv{B}, \inv{C}, \inv{D}$ 由反相器提供。
+
+若允許多層，提出 $\inv{B}$ 得 $F = \inv{B}(\inv{C} + \inv{D}) = \inv{B}\,\inv{CD} = \inv{B + CD}$，只要一個 AND 和一個 NOR，閘數更少。
+:::
+::::
+
+:::: exercise 用偶同位傳送 4 位元資料 $1011$，同位元是多少？若收到 $1001$ 加同位元 $1$，檢查器輸出為何？
+::: answer
+同位元 $P = 1 \oplus 0 \oplus 1 \oplus 1 = 1$，傳送的 5 個位元中有四個 1，是偶數。
+
+收到 $1001$ 與 $P = 1$：$C = 1 \oplus 0 \oplus 0 \oplus 1 \oplus 1 = 1$，1 的個數是奇數，檢查器輸出 1，表示偵測到錯誤（原本的第三位在傳送中翻轉了）。
 :::
 ::::

@@ -1,6 +1,6 @@
 # 數位邏輯講義 Digital Logic Notes
 
-以「單元」為單位的數位邏輯講義網站。內容只用 Markdown 撰寫，build script 會驗證格式、渲染數學式與卡諾圖，再輸出成靜態網站部署到 GitHub Pages。
+以「單元」為單位的數位邏輯複習講義網站，章節對應 Mano & Ciletti《Digital Design》（6th ed.）第 1–6 章與 Verilog 補充。內容只用 Markdown 撰寫，build script 會驗證格式、渲染數學式與卡諾圖，再輸出成靜態網站部署到 GitHub Pages。
 
 - 網站：<https://rogerh0711.github.io/digital-logic-notes/>
 - 專案規則：[AGENTS.md](AGENTS.md)（AI 與人類協作者都照這份文件工作；Claude Code 透過 [CLAUDE.md](CLAUDE.md) 自動載入）
@@ -23,7 +23,7 @@ npm run check   # 只驗證內容
 ## 新增一個單元
 
 1. 在 `content/syllabus.yml` 確認或新增單元條目。
-2. 複製 `content/units/_template.md` 成 `content/units/<id>.md` 並撰寫。
+2. 複製 `content/units/_template.md` 成 `content/units/<id>.md` 並撰寫。若是從投影片整理，把 PDF 放在 `sources/`（不會被 commit），照 AGENTS.md 第 4.1 節做。
 3. `npm run check` 通過後 push。
 
 詳細格式見 [AGENTS.md](AGENTS.md)。

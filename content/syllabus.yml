@@ -1,26 +1,40 @@
 # 課程大綱：所有單元依序列出，包含尚未撰寫的單元。
+# 對應課本：M. Morris Mano & Michael D. Ciletti, Digital Design（6th ed.）
 # - id：必須和 content/units/<id>.md 的檔名一致，前兩碼是單元編號
+# - chapter：對應的課本章節，會顯示在首頁卡片與單元頁
 # - 尚未撰寫的單元會在首頁與側邊欄顯示為「撰寫中」
 # - 已發布的單元不要改 id（網址會失效）；新增單元時編號接續最後一個
 
 units:
-  - id: 01-boolean-algebra
-    title: 布林代數與標準形式
-  - id: 02-karnaugh-maps
-    title: 卡諾圖化簡
-  - id: 03-combinational-design
-    title: 組合電路設計流程
-  - id: 04-mux-decoder
-    title: 多工器與解碼器
-  - id: 05-adders
-    title: 加法器與減法器
-  - id: 06-latches-flipflops
-    title: 閂鎖與正反器
-  - id: 07-sequential-design
-    title: 循序電路設計
+  - id: 01-number-systems
+    title: 數字系統與編碼
+    chapter: Ch 1
+  - id: 02-boolean-algebra
+    title: 布林代數與邏輯閘
+    chapter: Ch 2
+  - id: 03-gate-level-minimization
+    title: 閘級化簡
+    chapter: Ch 3
+  - id: 04-combinational-logic
+    title: 組合邏輯電路
+    chapter: Ch 4
+  - id: 05-latches-flipflops
+    title: 閂鎖、正反器與循序電路分析
+    chapter: Ch 5.1–5.5
+  - id: 06-sequential-design
+    title: 狀態化簡與循序電路設計
+    chapter: Ch 5.7–5.8
+  - id: 07-registers-counters
+    title: 暫存器與計數器
+    chapter: Ch 6
+  - id: 08-verilog-basics
+    title: Verilog HDL 入門
+    chapter: 補充（4.12、5.6）
 
 # frontmatter 的 tags 只能用這裡列出的詞；需要新詞時先加在這裡
 tags:
+  - 數字系統
+  - 編碼
   - 布林代數
   - 邏輯閘
   - 標準形式
@@ -31,4 +45,6 @@ tags:
   - 循序電路
   - 記憶元件
   - 狀態機
+  - 暫存器
+  - 計數器
   - Verilog

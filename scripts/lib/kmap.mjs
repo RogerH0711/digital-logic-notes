@@ -18,7 +18,7 @@ export function parseKmap(source) {
   }
   if (typeof spec !== 'object' || Array.isArray(spec)) throw new KmapError('kmap 內容必須是 YAML 物件');
 
-  const allowed = new Set(['vars', 'ones', 'dontcares', 'mode', 'groups', 'partial', 'caption']);
+  const allowed = new Set(['vars', 'ones', 'dontcares', 'mode', 'groups', 'partial', 'name', 'caption']);
   for (const key of Object.keys(spec)) {
     if (!allowed.has(key)) throw new KmapError(`kmap 不認得欄位「${key}」，可用欄位：${[...allowed].join(', ')}`);
   }
@@ -76,8 +76,9 @@ export function parseKmap(source) {
   }
 
   if (spec.caption !== undefined && typeof spec.caption !== 'string') throw new KmapError('caption 必須是字串');
+  if (spec.name !== undefined && (typeof spec.name !== 'string' || !spec.name.trim())) throw new KmapError('name 必須是非空字串（LaTeX，例如 D_A）');
 
-  return { vars, n, mode, value, groups, partial, caption: spec.caption ?? '' };
+  return { vars, n, mode, value, groups, partial, name: spec.name ?? '', caption: spec.caption ?? '' };
 }
 
 /** 一組格子若形成合法的圈，回傳 {mask, bits}（mask 為變動的位元），否則回傳 null。 */
@@ -200,7 +201,7 @@ export function renderKmap(km, renderMath, renderInline) {
     const items = groups
       .map((g, gi) => `<li><span class="km-swatch g${gi + 1}"></span>${renderMath(g.term)}<span class="km-cells">(${g.cells.join(', ')})</span></li>`)
       .join('');
-    const fName = `F(${vars.join(',')})`;
+    const fName = km.name || `F(${vars.join(',')})`;
     const result = km.partial ? '' : `<p class="km-result">${renderMath(`${fName} = ${groups.map((g) => g.term).join(op)}`)}</p>`;
     legend = `<ul class="km-legend">${items}</ul>${result}`;
   }
