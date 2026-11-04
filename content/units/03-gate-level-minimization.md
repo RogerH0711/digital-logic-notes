@@ -356,3 +356,173 @@ $$F = \inv{\,\inv{\inv{B}\,\inv{C}} \cdot \inv{\inv{B}\,\inv{D}}\,}$$
 收到 $1001$ 與 $P = 1$：$C = 1 \oplus 0 \oplus 0 \oplus 1 \oplus 1 = 1$，1 的個數是奇數，檢查器輸出 1，表示偵測到錯誤（原本的第三位在傳送中翻轉了）。
 :::
 ::::
+
+:::: exercise 〔作業 3.5 題型〕用四變數卡諾圖化簡（a）$F(A,B,C,D) = \sum m(1,3,5,9,11,13,14,15)$　（b）$F(A,B,C,D) = \sum m(0,1,4,5,6,7,13,15)$
+::: answer
+（a）
+
+```kmap
+vars: [A, B, C, D]
+ones: [1, 3, 5, 9, 11, 13, 14, 15]
+groups:
+  - [1, 3, 9, 11]
+  - [1, 5, 9, 13]
+  - [14, 15]
+caption: 第一圈跨越上下邊界，第二圈是整欄；$m_{14}$ 只能和 $m_{15}$ 合併。
+```
+
+（b）
+
+```kmap
+vars: [A, B, C, D]
+ones: [0, 1, 4, 5, 6, 7, 13, 15]
+groups:
+  - [4, 5, 6, 7]
+  - [0, 1, 4, 5]
+  - [5, 7, 13, 15]
+```
+
+三個圈都是必要質蘊含項：$m_6$ 只在第一圈，$m_0$ 只在第二圈，$m_{13}$ 只在第三圈。
+:::
+::::
+
+:::: exercise 〔作業 3.12 題型〕化簡成 SOP 與 POS：（a）$F = \prod M(1,3,4,6,9,11,12,14)$　（b）$F = \prod M(0,2,7,8,10,13)$
+::: answer
+$\prod M$ 列的是 0 的位置，其餘格子是 1。
+
+（a）圈 1 得 SOP、圈 0 得 POS：
+
+```kmap
+vars: [A, B, C, D]
+ones: [0, 2, 5, 7, 8, 10, 13, 15]
+groups:
+  - [0, 2, 8, 10]
+  - [5, 7, 13, 15]
+```
+
+```kmap
+vars: [A, B, C, D]
+ones: [0, 2, 5, 7, 8, 10, 13, 15]
+mode: pos
+groups:
+  - [1, 3, 9, 11]
+  - [4, 6, 12, 14]
+```
+
+結果和 $A, C$ 完全無關，其實就是 $B$ 與 $D$ 的 XNOR。
+
+（b）
+
+```kmap
+vars: [A, B, C, D]
+ones: [1, 3, 4, 5, 6, 9, 11, 12, 14, 15]
+groups:
+  - [1, 3, 9, 11]
+  - [4, 6, 12, 14]
+  - [4, 5]
+  - [14, 15]
+```
+
+```kmap
+vars: [A, B, C, D]
+ones: [1, 3, 4, 5, 6, 9, 11, 12, 14, 15]
+mode: pos
+groups:
+  - [0, 2, 8, 10]
+  - [7]
+  - [13]
+caption: $m_7$ 與 $m_{13}$ 四周都是 1，只能單獨成圈，各是一個四文字的和項。
+```
+
+兩種形式都是 10 個文字，任選一種實現即可。
+:::
+::::
+
+:::: exercise 〔作業 3.13 題型〕把 $A\inv{C}D + \inv{A}B\inv{C} + ABC + B\inv{C}D$ 化簡成 SOP 與 POS
+::: answer
+先展開成最小項：$A\inv{C}D$ 是 $m_9, m_{13}$；$\inv{A}B\inv{C}$ 是 $m_4, m_5$；$ABC$ 是 $m_{14}, m_{15}$；$B\inv{C}D$ 是 $m_5, m_{13}$。所以 $F = \sum m(4,5,9,13,14,15)$。
+
+```kmap
+vars: [A, B, C, D]
+ones: [4, 5, 9, 13, 14, 15]
+groups:
+  - [4, 5]
+  - [14, 15]
+  - [9, 13]
+caption: 原式的 $B\inv{C}D$（$m_5, m_{13}$）已經被另外兩圈蓋住，是多餘的。
+```
+
+```kmap
+vars: [A, B, C, D]
+ones: [4, 5, 9, 13, 14, 15]
+mode: pos
+groups:
+  - [0, 1, 2, 3]
+  - [2, 3, 6, 7]
+  - [2, 3, 10, 11]
+  - [8, 12]
+```
+:::
+::::
+
+:::: exercise 〔作業 3.18 題型〕只用兩輸入閘實現 $F = (A \oplus B)\,\inv{(C \oplus D)}$：（a）只用 NOR　（b）只用 NAND
+::: answer
+先準備兩個積木（第 4 單元的分析例題與練習題）：
+
+- 4 個 NAND 組成 XOR。
+- 4 個 NOR 組成 XNOR。
+- 任何 NAND 或 NOR 把兩個輸入接在一起就是反相器。
+
+**（a）NOR**：用笛摩根定理把 AND 改寫成 NOR，
+
+$$F = (A \oplus B) \cdot \inv{C \oplus D} = \inv{\,\inv{A \oplus B} + (C \oplus D)\,}$$
+
+- $\inv{A \oplus B}$：4 個 NOR 組成的 XNOR，直接可用。
+- $C \oplus D$：4 個 NOR 做出 XNOR，再接 1 個 NOR 反相，共 5 個。
+- 最後 1 個 NOR 把兩者合起來。
+
+共 $4 + 5 + 1 = 10$ 個兩輸入 NOR。
+
+**（b）NAND**：
+
+$$F = \inv{\,\inv{(A \oplus B) \cdot \inv{C \oplus D}}\,}$$
+
+- $A \oplus B$：4 個 NAND。
+- $\inv{C \oplus D}$：4 個 NAND 做出 XOR，再接 1 個 NAND 反相，共 5 個。
+- 1 個 NAND 把兩者合起來，再 1 個 NAND 反相得到 $F$。
+
+共 $4 + 5 + 2 = 11$ 個兩輸入 NAND。
+:::
+::::
+
+:::: exercise 〔作業 3.24 題型〕用（a）NAND-AND　（b）AND-NOR　（c）OR-NAND　（d）NOR-OR 實現 $F(A,B,C,D) = \sum m(0,2,8,10,12,13,14,15)$
+::: answer
+先在卡諾圖上分別圈 1 與圈 0：
+
+```kmap
+vars: [A, B, C, D]
+ones: [0, 2, 8, 10, 12, 13, 14, 15]
+groups:
+  - [12, 13, 14, 15]
+  - [0, 2, 8, 10]
+```
+
+```kmap
+vars: [A, B, C, D]
+ones: [0, 2, 8, 10, 12, 13, 14, 15]
+mode: pos
+groups:
+  - [4, 5, 6, 7]
+  - [1, 3, 9, 11]
+```
+
+圈 0 的結果取補數，得 $\inv{F} = \inv{A}B + \inv{B}D$（$\inv{F}$ 的 SOP）。圈 1 的結果取補數，得 $\inv{F} = (\inv{A} + \inv{B})(B + D)$（$\inv{F}$ 的 POS）。
+
+- **（b）AND-NOR**：$F = \inv{\inv{A}B + \inv{B}D}$，兩個 AND 接一個 NOR。
+- **（a）NAND-AND**：同一式用笛摩根定理拆開，$F = \inv{\inv{A}B} \cdot \inv{\inv{B}D}$，兩個 NAND 接一個 AND。
+- **（c）OR-NAND**：$F = \inv{(\inv{A} + \inv{B})(B + D)}$，兩個 OR 接一個 NAND。
+- **（d）NOR-OR**：同一式拆開，$F = \inv{\inv{A} + \inv{B}} + \inv{B + D}$，兩個 NOR 接一個 OR。
+
+驗算：$\inv{\inv{A} + \inv{B}} = AB$、$\inv{B + D} = \inv{B}\,\inv{D}$，相加正好是圈 1 得到的 $AB + \inv{B}\,\inv{D}$。
+:::
+::::

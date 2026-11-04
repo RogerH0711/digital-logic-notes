@@ -307,3 +307,74 @@ $$\inv{F} = (\inv{A}B + \inv{C})(A + \inv{B})$$
 $$\inv{F} = (\inv{A} + \inv{C})(B + \inv{C})(A + \inv{B})$$
 :::
 ::::
+
+:::: exercise 〔作業 2.3 題型〕化簡成最少文字數：（a）$\inv{x}y + \inv{x}\,\inv{y}$　（b）$xy\inv{z} + \inv{x}\,\inv{z} + xyz$　（c）$\inv{x + \inv{y}} \cdot \inv{\inv{x} + y}$　（d）$\inv{a}\,\inv{b}c + a\inv{b}c + \inv{a}bc + abc$
+::: answer
+（a）提出 $\inv{x}$：$\inv{x}(y + \inv{y}) = \inv{x}$，1 個文字。
+
+（b）第一、三項提出 $xy$：$xy(\inv{z} + z) = xy$，得 $xy + \inv{x}\,\inv{z}$，4 個文字。這兩項沒有共同因子，無法再化簡。
+
+（c）兩個括號各用一次笛摩根定理：$\inv{x + \inv{y}} = \inv{x}y$，$\inv{\inv{x} + y} = x\inv{y}$。相乘得 $\inv{x}y \cdot x\inv{y}$，其中 $x\inv{x} = 0$，所以結果是 **0**。
+
+（d）四項都含 $c$，提出來後括號內是 $\inv{a}\,\inv{b} + a\inv{b} + \inv{a}b + ab$，四種組合全部出現，等於 1，所以結果是 $c$，1 個文字。
+:::
+::::
+
+:::: exercise 〔作業 2.9 題型〕求補數：（a）$x\inv{y}z + \inv{x}y\inv{z}$　（b）$(\inv{x} + y)(\inv{y} + z)(\inv{z} + x)$　（c）$w\inv{x} + \inv{w}(\inv{x} + y + \inv{z})$
+::: answer
+用「取對偶再把每個文字取補數」：
+
+（a）對偶 $(x + \inv{y} + z)(\inv{x} + y + \inv{z})$，再補每個文字：
+
+$$\inv{F} = (\inv{x} + y + \inv{z})(x + \inv{y} + z)$$
+
+（b）對偶 $\inv{x}y + \inv{y}z + \inv{z}x$，再補每個文字：
+
+$$\inv{F} = x\inv{y} + y\inv{z} + z\inv{x}$$
+
+（c）對偶 $(w + \inv{x})(\inv{w} + \inv{x}y\inv{z})$，再補每個文字：
+
+$$\inv{F} = (\inv{w} + x)(w + x\inv{y}z)$$
+
+三題都可以挑幾組值代入，確認 $F$ 與 $\inv{F}$ 永遠相反。
+:::
+::::
+
+:::: exercise 〔作業 2.18 題型〕$F = \inv{w}\,\inv{x}z + \inv{w}xz + wx\inv{y} + x\inv{y}z + wxy$：（a）寫成最小項和　（b）用代數化簡到最少文字　（c）比較化簡前後的閘數
+::: answer
+（a）逐項展開成最小項（$wxyz$ 依序為位元 3 到 0）：
+
+- $\inv{w}\,\inv{x}z$：$m_1, m_3$
+- $\inv{w}xz$：$m_5, m_7$
+- $wx\inv{y}$：$m_{12}, m_{13}$
+- $x\inv{y}z$：$m_5, m_{13}$
+- $wxy$：$m_{14}, m_{15}$
+
+聯集得 $F = \sum m(1,3,5,7,12,13,14,15)$。
+
+（b）前兩項提出 $\inv{w}z$：$\inv{w}z(\inv{x} + x) = \inv{w}z$。第三、五項提出 $wx$：$wx(\inv{y} + y) = wx$。剩下的 $x\inv{y}z$：$w = 0$ 時被 $\inv{w}z$ 蓋住，$w = 1$ 時被 $wx$ 蓋住，是多餘的項（共識定理）。所以
+
+$$F = \inv{w}z + wx$$
+
+展開回最小項：$\inv{w}z$ 是 $m_1, m_3, m_5, m_7$，$wx$ 是 $m_{12}$ 到 $m_{15}$，和（a）相同。
+
+（c）原式五項都是三個文字，需要 5 個三輸入 AND 和 1 個五輸入 OR，共 6 個閘；化簡後只要 2 個兩輸入 AND 和 1 個兩輸入 OR，共 3 個閘，不計反相器。
+:::
+::::
+
+:::: exercise 〔作業 2.22 題型〕把 $(x + \inv{w}y)(w + y\inv{z})$ 分別寫成 SOP 與 POS
+::: answer
+**SOP**：直接展開，
+
+$$xw + xy\inv{z} + \inv{w}yw + \inv{w}y\inv{z} = wx + xy\inv{z} + \inv{w}y\inv{z}$$
+
+其中 $\inv{w}yw = 0$ 消去。$xy\inv{z}$ 是 $wx$ 與 $\inv{w}y\inv{z}$ 的共識項，可以再消去，最簡 SOP 為 $wx + \inv{w}y\inv{z}$。
+
+**POS**：用分配律 $A + BC = (A + B)(A + C)$ 拆開每個括號：
+
+- $x + \inv{w}y = (x + \inv{w})(x + y)$
+- $w + y\inv{z} = (w + y)(w + \inv{z})$
+
+所以 $(x + \inv{w})(x + y)(w + y)(w + \inv{z})$。
+:::
+::::
