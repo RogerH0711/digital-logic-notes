@@ -1,0 +1,34 @@
+# 課程大綱：所有單元依序列出，包含尚未撰寫的單元。
+# - id：必須和 content/units/<id>.md 的檔名一致，前兩碼是單元編號
+# - 尚未撰寫的單元會在首頁與側邊欄顯示為「撰寫中」
+# - 已發布的單元不要改 id（網址會失效）；新增單元時編號接續最後一個
+
+units:
+  - id: 01-boolean-algebra
+    title: 布林代數與標準形式
+  - id: 02-karnaugh-maps
+    title: 卡諾圖化簡
+  - id: 03-combinational-design
+    title: 組合電路設計流程
+  - id: 04-mux-decoder
+    title: 多工器與解碼器
+  - id: 05-adders
+    title: 加法器與減法器
+  - id: 06-latches-flipflops
+    title: 閂鎖與正反器
+  - id: 07-sequential-design
+    title: 循序電路設計
+
+# frontmatter 的 tags 只能用這裡列出的詞；需要新詞時先加在這裡
+tags:
+  - 布林代數
+  - 邏輯閘
+  - 標準形式
+  - 化簡
+  - 卡諾圖
+  - 組合電路
+  - 算術電路
+  - 循序電路
+  - 記憶元件
+  - 狀態機
+  - Verilog

@@ -1,0 +1,28 @@
+  <main class="home" id="main">
+    <section class="hero">
+      <div class="hero-wave" aria-hidden="true">
+        <svg viewBox="0 0 600 60" preserveAspectRatio="none"><path d="M0 48h60V12h60v36h30V12h90v36h60V12h30v36h90V12h60v36h60V12h60" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+      </div>
+      <p class="hero-kicker">{{siteSubtitle}}</p>
+      <h1>{{siteTitle}}</h1>
+      <p class="hero-tagline">{{tagline}}</p>
+      <p class="hero-stats"><span><strong>{{publishedCount}}</strong> 個單元已完成</span><span><strong>{{plannedCount}}</strong> 個撰寫中</span><span><strong>{{exerciseCount}}</strong> 題練習</span></p>
+    </section>
+
+    <section class="syllabus" aria-labelledby="syllabus-title">
+      <h2 id="syllabus-title">課程大綱</h2>
+      <ol class="unit-cards">
+{{cards}}
+      </ol>
+    </section>
+
+    <section class="how" aria-labelledby="how-title">
+      <h2 id="how-title">每個單元的固定結構</h2>
+      <ol class="how-steps">
+        <li><span class="bits">00</span><strong>學習目標</strong>先知道讀完要會什麼</li>
+        <li><span class="bits">01</span><strong>正文與例題</strong>例子先於定義，化簡都附卡諾圖</li>
+        <li><span class="bits">11</span><strong>重點整理</strong>考前一分鐘複習</li>
+        <li><span class="bits">10</span><strong>練習題</strong>每題附完整解答，點開才看得到</li>
+      </ol>
+    </section>
+  </main>

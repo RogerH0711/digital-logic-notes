@@ -1,0 +1,9 @@
+{
+  "title": "數位邏輯講義",
+  "subtitle": "Digital Logic Notes",
+  "tagline": "從布林代數到循序電路，每一頁都能自己讀懂、自己練習、自己驗證。",
+  "author": "謝承祐",
+  "repo": "https://github.com/RogerH0711/digital-logic-notes",
+  "branch": "main",
+  "lang": "zh-Hant-TW"
+}

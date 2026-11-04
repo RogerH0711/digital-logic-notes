@@ -1,0 +1,36 @@
+  <div class="unit-layout">
+    <nav class="unit-nav" aria-label="單元目錄">
+      <details class="unit-nav-box" open>
+        <summary>全部單元</summary>
+        <ol class="unit-nav-list">
+{{sidebar}}
+        </ol>
+      </details>
+    </nav>
+
+    <main class="unit-main" id="main">
+      <header class="unit-header">
+        <p class="unit-badge"><span class="bits">{{unitBits}}</span><span class="unit-label">Unit {{unitNo}}</span></p>
+        <h1>{{title}}</h1>
+        <p class="unit-summary">{{summary}}</p>
+        <dl class="unit-meta">
+{{meta}}
+        </dl>
+      </header>
+
+      <article class="prose">
+{{content}}
+      </article>
+
+      <nav class="pager" aria-label="上一個與下一個單元">
+{{pager}}
+      </nav>
+    </main>
+
+    <aside class="page-toc" aria-label="本頁目錄">
+      <p class="page-toc-title">本頁內容</p>
+      <ol>
+{{toc}}
+      </ol>
+    </aside>
+  </div>

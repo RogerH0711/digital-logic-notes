@@ -1,0 +1,25 @@
+{
+  "name": "digital-logic-notes",
+  "version": "1.0.0",
+  "description": "數位邏輯講義站：Markdown 內容＋自動 build 的靜態網站",
+  "scripts": {
+    "check": "node scripts/build.mjs --check",
+    "build": "node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && node scripts/serve.mjs"
+  },
+  "author": "謝承祐 (RogerH0711)",
+  "license": "MIT",
+  "dependencies": {
+    "@vscode/markdown-it-katex": "^1.1.2",
+    "js-yaml": "^5.5.0",
+    "katex": "^0.19.1",
+    "markdown-it": "^15.0.3",
+    "markdown-it-anchor": "^10.0.0",
+    "markdown-it-container": "^4.0.0"
+  },
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
+}
